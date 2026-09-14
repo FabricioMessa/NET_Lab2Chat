@@ -1,0 +1,3 @@
+echo "client" > .gitignore
+echo "server" >> .gitignore
+echo "*.exe" >> .gitignore

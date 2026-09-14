@@ -1,0 +1,81 @@
+Ejercicio: 
+Tenemos 3 clientes: Peter, Mat y Jon, además también tenemos un socket-server, para poder pasarse mensajes por chat deben hacer lo siguiente:
+Si Peter quiere mandar un mensaje a Jon entonces: [Peter] -> [Server] -> [Jon]
+Si Jon quiere mandar un mensaje a Mat entonces: [Jon] -> [Server] -> [Mat] 
+
+Necesitamos:
+[N] -> nickname
+[M] -> msg (unicast) 1-1
+[Q] -> quit/logout
+[B] -> brodcast msg (multicast) 1-*
+
+          7B      Variable
+1. [N] [0000005]  [Peter]    <- client - server 
+
+          7B      Variable        11B           Variable  
+2. [M] [0000003]   [Jon]     [00000000012]  [We have a Quiz]   <- client - server
+
+          7B      Variable        11B           Variable  
+3. [m] [0000005]   [Peter]    [00000000012]  [We have a Quiz]   <- server - client
+
+             11B      Variable   
+4. [B] [00000000003]   [msg]    <- client - server    
+
+             7B        Variable        11B           Variable  
+5. [b] [00000000005]   [Peter]     [00000000003]      [msg]    <- server - client
+ 
+6. [Q]  <- cliente - server
+
+Todo servidor tiene un mapa: STL (Standar Template Library)
+
+map<string, int> ListofClient;
+ListofClient["Peter"] = socketFD;
+
+string | int
+--------------
+Peter  | 5
+Jon    | 7
+Mat    | 6
+
+Socket = ListofClient["Jon"]
+
+Server
+map<string, int> LC;
+
+for(;;) {
+    Scli = accept(ss, ... )
+    callthread(threadReadClient(Scli));
+}
+
+threadReadClient(S) {
+    //look or wait for nickname
+    read(s, buff, 1);
+    while (buff[0] != "N") {}
+    n = read(s, buff, 7); buff[n] = '\0';
+    tamano = atoi(buff);
+    n = read(s, buff, tamano);
+    buff[n] = '\0';
+    LC[buff] = S;
+    for (;;) {
+        read(s, buff, 1);
+    }
+}
+
+Client
+connect(.....)
+callthread(threadReadServer(S));
+
+cout << "enter your name: ":
+cin >> dataFromUser;
+
+enviarNickname(dataFromUser) {
+    cout << Select option M, B, Q: ";
+    cin >> selection;
+
+    if Q:
+        ...
+    if M:
+        ...
+    if B:
+        ...
+}
