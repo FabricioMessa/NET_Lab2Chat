@@ -9,7 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
-//#include <iostream>
+#include <iostream>
 #include <map>
 #include <string>
 #include <thread>
@@ -47,8 +47,9 @@ void ThreadReadClient(int S) {
     nickname = buff;
     ListOfCli[buff] = S;
 
+    cout << "[New user]: " << nickname << " (socket " << S << ")" << endl;
+
     string destination;
-    string dataStructure;
     string msg;
 
     for (;;) {
@@ -71,11 +72,16 @@ void ThreadReadClient(int S) {
             buff[n] = '\0';
             msg = buff;
 
+            cout << "[" << nickname << " -> " << destination << " (Privado)]: " << msg << endl;
+
+            string dataStructure = "";
             dataStructure = dataStructure + 'm';
             dataStructure = dataStructure + zeroPad(nickname.size(), 7);
             dataStructure = dataStructure + nickname;
             dataStructure = dataStructure + zeroPad(msg.size(), 11);
             dataStructure = dataStructure + msg;
+
+            cout << dataStructure << endl;
 
             write(ListOfCli[destination], dataStructure.c_str(), dataStructure.size());
 
@@ -89,17 +95,23 @@ void ThreadReadClient(int S) {
             buff[n] = '\0';
             msg = buff;
 
+            cout << "[" << nickname << " (Broadcast)]: " << msg << endl;
+
+            string dataStructure = "";
             dataStructure = dataStructure + 'b';
             dataStructure = dataStructure + zeroPad(nickname.size(), 7);
             dataStructure = dataStructure + nickname;
             dataStructure = dataStructure + zeroPad(msg.size(), 11);
             dataStructure = dataStructure + msg;
 
+            cout << dataStructure << endl;
+
             for (map<string, int>::iterator it = ListOfCli.begin(); it != ListOfCli.end(); ++it) {
                 write(it->second, dataStructure.c_str(), dataStructure.size());
             }
 
         } else if (buff[0] == 'Q') {
+            cout << "[Sistema] Usuario desconectado: " << nickname << " (socket " << S << ")" << endl;
             ListOfCli.erase(nickname);
         }
     }
