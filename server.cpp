@@ -72,8 +72,8 @@ void ThreadReadClient(int S) {
             msg = buff;
 
             dataStructure = dataStructure + 'm';
-            dataStructure = dataStructure + zeroPad(destination.size(), 7);
-            dataStructure = dataStructure + destination;
+            dataStructure = dataStructure + zeroPad(nickname.size(), 7);
+            dataStructure = dataStructure + nickname;
             dataStructure = dataStructure + zeroPad(msg.size(), 11);
             dataStructure = dataStructure + msg;
 
