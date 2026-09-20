@@ -86,7 +86,6 @@ void ThreadReadClient(int S) {
             write(ListOfCli[destination], dataStructure.c_str(), dataStructure.size());
 
         } else if (buff[0] == 'B') {
-
             n = read(S, buff, 11);
             buff[n] = '\0';
             tamano = atoi(buff);
@@ -109,10 +108,11 @@ void ThreadReadClient(int S) {
             for (map<string, int>::iterator it = ListOfCli.begin(); it != ListOfCli.end(); ++it) {
                 write(it->second, dataStructure.c_str(), dataStructure.size());
             }
-
         } else if (buff[0] == 'Q') {
             cout << "[Sistema] Usuario desconectado: " << nickname << " (socket " << S << ")" << endl;
             ListOfCli.erase(nickname);
+            close(S);
+            return;
         }
     }
 }
